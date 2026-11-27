@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect width="760" height="240" fill="#fff"/>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10z" fill="#444"/>
+    </marker>
+  </defs>
+  <g fill="none" stroke="#444" stroke-width="1.3">
+    <rect x="20" y="40" width="110" height="44" rx="6"/>
+    <rect x="165" y="40" width="160" height="44" rx="6"/>
+    <rect x="360" y="40" width="130" height="44" rx="6"/>
+    <rect x="525" y="40" width="140" height="44" rx="6"/>
+    <rect x="360" y="176" width="305" height="44" rx="6" stroke-dasharray="4 3"/>
+    <path d="M130 62H163" marker-end="url(#a)"/>
+    <path d="M325 62H358" marker-end="url(#a)"/>
+    <path d="M490 62H523" marker-end="url(#a)"/>
+    <path d="M665 62H700" marker-end="url(#a)"/>
+    <path d="M400 84V112" marker-end="url(#a)"/>
+    <path d="M565 84V112" marker-end="url(#a)"/>
+    <path d="M460 84V174M625 84V174" stroke="#999" stroke-dasharray="3 3"/>
+  </g>
+  <g fill="#222" text-anchor="middle">
+    <text x="75" y="58">frame from</text><text x="75" y="74">the NIC</text>
+    <text x="245" y="58">find the source</text><text x="245" y="74">IPv4, IPv6, VLAN tags</text>
+    <text x="425" y="58">block list</text><text x="425" y="74">LPM trie</text>
+    <text x="595" y="58">token bucket</text><text x="595" y="74">per source, LRU</text>
+    <text x="728" y="66">PASS</text>
+    <text x="400" y="128" fill="#b22">DROP</text>
+    <text x="565" y="128" fill="#b22">DROP</text>
+    <text x="512" y="203">pinned maps, set and read by the CLI</text>
+  </g>
+  <text x="20" y="20" fill="#666" font-size="12">Every frame is counted in a per-CPU array. Frames it cannot read pass.</text>
+</svg>
