@@ -15,7 +15,7 @@ check:
 lint:
 	cargo fmt --all --check
 	cargo clippy $(CARGO_FLAGS) --all-targets -- -D warnings
-	shellcheck scripts/*.sh tests/vm/*.sh
+	shellcheck -x scripts/*.sh tests/vm/*.sh
 
 # Needs root: loads the program and runs frames through it.
 kernel-test:
