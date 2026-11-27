@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/banner.png" alt="Pixel art: packets queue at a guarded gate; two pass through to a server and one is turned back" width="100%"></p>
+
 # xdp-guard
 
 A per-source rate limiter and block list for Linux, written in Rust as an XDP program with [aya](https://aya-rs.dev).
