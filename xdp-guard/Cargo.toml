@@ -1,0 +1,19 @@
+[package]
+name = "xdp-guard"
+description = "Load the XDP filter, manage its block lists and rate limit, read its counters"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+xdp-guard-common = { path = "../xdp-guard-common", features = ["user"] }
+anyhow = { workspace = true }
+aya = { workspace = true }
+clap = { workspace = true }
+
+[build-dependencies]
+anyhow = { workspace = true }
+aya-build = { workspace = true }
+cargo_metadata = { workspace = true }
+xdp-guard-ebpf = { path = "../xdp-guard-ebpf" }
