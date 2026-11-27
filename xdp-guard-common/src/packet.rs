@@ -37,7 +37,7 @@ impl Source {
     pub fn key(self) -> [u8; 16] {
         match self {
             Source::V6(a) => a,
-            Source::V4([a, b, c, d]) => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, a, b, c, d],
+            Source::V4(a) => (0xffff << 32 | u128::from(u32::from_be_bytes(a))).to_be_bytes(),
         }
     }
 }

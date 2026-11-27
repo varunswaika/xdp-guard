@@ -6,6 +6,8 @@
 //! one to find how long the bucket takes to fill.
 
 const NS_PER_SEC: u64 = 1_000_000_000;
+/// The largest burst whose credit fits in a u64.
+const MAX_BURST: u64 = u64::MAX / NS_PER_SEC;
 
 /// The rate limit, as the CLI writes it into the `LIMIT` map.
 /// A rate of zero turns limiting off.
@@ -45,7 +47,7 @@ impl Limit {
         if burst == 0 {
             return Err(LimitError::ZeroBurst);
         }
-        if burst.checked_mul(NS_PER_SEC).is_none() {
+        if burst > MAX_BURST {
             return Err(LimitError::BurstTooLarge);
         }
         Ok(Limit { rate, burst })
@@ -55,8 +57,13 @@ impl Limit {
         self.rate != 0
     }
 
+    // Not `saturating_mul`: that needs a 128-bit multiply, which BPF lacks.
     fn capacity(&self) -> u64 {
-        self.burst.saturating_mul(NS_PER_SEC)
+        if self.burst > MAX_BURST {
+            u64::MAX
+        } else {
+            self.burst * NS_PER_SEC
+        }
     }
 }
 
@@ -122,7 +129,7 @@ mod tests {
         assert_eq!(Limit::new(0, 5), Err(LimitError::ZeroRate));
         assert_eq!(Limit::new(5, 0), Err(LimitError::ZeroBurst));
         assert_eq!(Limit::new(5, u64::MAX), Err(LimitError::BurstTooLarge));
-        assert!(Limit::new(u64::MAX, u64::MAX / NS_PER_SEC).is_ok());
+        assert!(Limit::new(u64::MAX, MAX_BURST).is_ok());
     }
 
     #[test]
@@ -166,7 +173,7 @@ mod tests {
 
     #[test]
     fn long_gaps_at_huge_rates_do_not_overflow() {
-        let limit = Limit::new(u64::MAX, u64::MAX / NS_PER_SEC).unwrap();
+        let limit = Limit::new(u64::MAX, MAX_BURST).unwrap();
         let mut b = Bucket::full(&limit, 0);
         b.credit = 0;
         assert!(b.admit(&limit, u64::MAX));

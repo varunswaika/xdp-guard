@@ -60,7 +60,7 @@ impl Counter {
     }
 }
 
-pub const COUNTERS: u32 = Counter::ALL.len() as u32;
+pub const COUNTER_SLOTS: u32 = Counter::ALL.len() as u32;
 
 #[cfg(feature = "user")]
 mod pod {
