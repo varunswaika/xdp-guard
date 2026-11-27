@@ -45,7 +45,7 @@ echo "-- a flood is held to the limit"
 "$guard" --pin-dir "$pins" limit 10 5
 got=$(received -c 100 -i 0.01 -W 1)
 # 100 pings over about a second: the burst of 5 and about 10 more.
-[ "$got" -ge 5 ] && [ "$got" -le 30 ] || fail "$got of 100 pings passed a 10/s limit"
+if [ "$got" -lt 5 ] || [ "$got" -gt 30 ]; then fail "$got of 100 pings passed a 10/s limit"; fi
 [ "$(counter limited)" -gt 0 ] || fail "limited counter did not move"
 "$guard" --pin-dir "$pins" top | grep -q "$client_ip" || fail "top does not list the flooder"
 "$guard" --pin-dir "$pins" limit off
