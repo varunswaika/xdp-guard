@@ -1,0 +1,46 @@
+# Loading the program needs root and a real kernel, so this job boots the
+# runner's own kernel in a small VM with virtme-ng and runs the tests there
+# as root.
+name: VM
+
+on: [push, pull_request]
+
+jobs:
+  kernel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rust-src
+      - name: Install bpf-linker
+        run: |
+          mkdir -p ~/.local/bin
+          curl -sSfL https://github.com/aya-rs/bpf-linker/releases/download/v0.13.0/bpf-linker-x86_64-unknown-linux-musl.tar.zst |
+            tar --zstd -x -C ~/.local/bin
+          echo ~/.local/bin >> "$GITHUB_PATH"
+      - name: Install virtme-ng
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            qemu-system-x86 busybox-static virtiofsd iproute2 iputils-ping \
+            "linux-headers-$(uname -r)"
+          pipx install virtme-ng
+          sudo chmod a+r /boot/vmlinuz-*
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' |
+            sudo tee /etc/udev/rules.d/99-kvm.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Build
+        run: |
+          cargo build --release
+          cargo test --release --test kernel --no-run --message-format=json |
+            jq -r 'select(.target.name == "kernel" and .executable) | .executable' > kernel-tests
+          make module
+      - name: Run in the VM
+        run: |
+          vng -r --user root --exec "tests/vm/run.sh target/release/xdp-guard $(cat kernel-tests) &&
+            tests/vm/nf.sh nf/xdp_guard_nf.ko"

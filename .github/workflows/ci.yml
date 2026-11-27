@@ -1,0 +1,25 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rust-src, clippy, rustfmt
+      - name: Install bpf-linker
+        run: |
+          mkdir -p ~/.local/bin
+          curl -sSfL https://github.com/aya-rs/bpf-linker/releases/download/v0.13.0/bpf-linker-x86_64-unknown-linux-musl.tar.zst |
+            tar --zstd -x -C ~/.local/bin
+          echo ~/.local/bin >> "$GITHUB_PATH"
+      - run: make lint CARGO_FLAGS=
+      - run: make check CARGO_FLAGS=
+      - name: Build the netfilter module
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y "linux-headers-$(uname -r)"
+          make module
