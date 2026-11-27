@@ -5,7 +5,7 @@
 - Host tests pass: token bucket, frame parser, prefix parsing.
 - The VM job (virtme-ng) loads the program and the netfilter module as root:
   - the 5 kernel tests pass (`BPF_PROG_TEST_RUN`);
-  - end to end over a veth pair, traffic passes, a blocked source is dropped, and 100 pings at a 10/s limit let 25 through;
+  - end to end over a veth pair, traffic passes, a blocked source is dropped, and of 100 pings at a 10/s limit, 85 were limited (about 15 got through);
   - the module drops all 3 pings from a blocked source.
 - Lint (fmt, clippy, ShellCheck) is clean.
 

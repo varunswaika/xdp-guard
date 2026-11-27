@@ -58,7 +58,7 @@ Loading an eBPF program needs root, which the machine this was written on does n
 | eBPF program builds; the object has no unresolved calls | host, nightly and `bpf-linker` | Yes, and loaded in the VM job |
 | Netfilter module builds with `W=1` and passes `checkpatch.pl` | host, Linux 7.3.6 headers | Yes, and loaded in the VM job |
 | The verifier accepts the program; frames run through it with `BPF_PROG_TEST_RUN` give the right verdicts and counters (5 tests) | `xdp-guard/tests/kernel.rs`, root only (`make kernel-test`) | Yes, 5 of 5 pass in the VM job |
-| The CLI attaches to a veth, blocks and limits real pings, and detaches cleanly | `tests/vm/e2e.sh`, root | Yes, in the VM job. 100 pings at a 10/s limit: 25 passed, 85 limited |
+| The CLI attaches to a veth, blocks and limits real pings, and detaches cleanly | `tests/vm/e2e.sh`, root | Yes, in the VM job. Of 100 pings at a 10/s limit, 85 were limited, so about 15 got through |
 | The module loads and drops a blocked source | `tests/vm/nf.sh`, root | Yes, in the VM job: 3 of 3 pings from a blocked source dropped |
 | All of the above in CI | `.github/workflows/ci.yml`, and `vm.yml` boots the runner's kernel with virtme-ng | Yes, both green |
 
